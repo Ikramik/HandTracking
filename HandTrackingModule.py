@@ -15,7 +15,7 @@ class handDetector():
                                         min_tracking_confidence=self.trackCon)
         self.mpDraw = mp.solutions.drawing_utils
 
-    def findHands(self, img, draw=True):
+    def findHands(self, img, draw=False):
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         self.results = self.hands.process(imgRGB)
         # print(results.multi_hand_landmarks)
@@ -28,7 +28,7 @@ class handDetector():
 
         return img
 
-    def findPosition(self, img, handNo, draw= True):
+    def findPosition(self, img, handNo, draw= False):
         lmList = []
         if self.results.multi_hand_landmarks:
             myHand = self.results.multi_hand_landmarks[handNo]
@@ -38,7 +38,7 @@ class handDetector():
                 cx, cy = int(lm.x * w), int(lm.y * h)
                 lmList.append([id, cx, cy])
                 if draw:
-                    cv2.circle(img, (cx,cy), 15,(255,0,255), cv2.FILLED)
+                    cv2.circle(img, (cx,cy), 7,(255,0,100), cv2.FILLED)
         return lmList
 def main():
     pTime = 0
@@ -49,7 +49,10 @@ def main():
     while True:
         success, img = cap.read()
         img = detector.findHands(img)
-        lmList = detector.findPosition(img)
+        lmList = detector.findPosition(img, handNo=0)
+        if len(lmList) !=0:
+            print(lmList[4])
+
         cTime = time.time()
         fps = 1 / (cTime - pTime)
         pTime = cTime
